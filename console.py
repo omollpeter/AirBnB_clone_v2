@@ -118,13 +118,46 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
+        else:
+            cls_name, delim, attr_vals = args.partition(" ")
+            if cls_name not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
+
+        if attr_vals:
+            if attr_vals.__contains__('[') and attr_vals.__contains__(']'):
+                list_v = attr_vals[attr_vals.find('['):attr_vals.find(']') + 1]
+                new_list_v = list_v.replace(' ', '*')
+                attr_vals = attr_vals.replace(list_v, new_list_v)
+            attr_vals = attr_vals.split(" ")
+
+            new_instance = HBNBCommand.classes[cls_name]()
+            for item in attr_vals:
+                if "=" not in item:
+                    continue
+                k_v = item.split("=")
+                key_ = k_v[0]
+                val_ = k_v[1]
+
+                if val_.startswith("[") and val_.endswith("]"):
+                    val_ = val_.replace("*", " ")
+                    val_ = eval(val_)
+                elif '"' in val_:
+                    val_ = val_.replace('_', ' ')
+                    val_ = val_.strip('\"')
+                elif "." in val_:
+                    val_ = eval(val_)
+                else:
+                    val_ = eval(val_)
+
+                new_instance.__dict__[key_] = val_
+
+            storage.new(new_instance)
+        else:
+            new_instance = HBNBCommand.classes[cls_name]()
+
         storage.save()
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -187,7 +220,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -319,6 +352,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
