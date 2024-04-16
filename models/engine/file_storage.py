@@ -56,6 +56,8 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
+        """Deletes an object from __objects dictionary"""
+
         if obj is None:
             return
         for key, value in FileStorage.__objects.items():
