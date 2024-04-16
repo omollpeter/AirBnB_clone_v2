@@ -86,6 +86,9 @@ class DBStorage:
             self.__session.delete(obj)
 
     def reload(self):
+        """
+        Create all tables in the database then creates a db session
+        """
         Base.metadata.create_all(self.__engine)
 
         Session = scoped_session(sessionmaker(
