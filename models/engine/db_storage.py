@@ -7,7 +7,7 @@ relational database using SQLAlchemy
 
 
 import os
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine
 from models.base_model import Base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.state import State
