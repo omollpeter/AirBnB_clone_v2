@@ -10,7 +10,7 @@ class Place(BaseModel, Base):
 
     __tablename__ = "places"
 
-    city_id = Column(
+    revw_id = Column(
         String(length=60), ForeignKey("cities.id"), nullable=False
     )
     user_id = Column(
@@ -27,3 +27,21 @@ class Place(BaseModel, Base):
     amenity_ids = []
     user = relationship("User")
     cities = relationship("City")
+    reviews = relationship("Review", cascade="all, delete-orphan")
+
+    @property
+    def reviews(self):
+        """
+        Returns the list of review instances with place id equals to
+        the current Place.id
+        """
+
+        from models import storage
+        revw_instances = []
+
+        for key, value in storage.all().items():
+            if not "Place" in key:
+                continue
+            if self.id in value:
+                revw_instances.append(value)
+        return revw_instances
