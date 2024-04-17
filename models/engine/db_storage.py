@@ -10,8 +10,8 @@ import os
 from sqlalchemy import create_engine, MetaData
 from models.base_model import Base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models.city import City
 from models.state import State
+from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
@@ -43,8 +43,10 @@ class DBStorage:
             pool_pre_ping=True
         )
 
+
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
+
 
     def all(self, cls=None):
         """
@@ -54,20 +56,22 @@ class DBStorage:
         Returns:
             return (dict): Dictionary containing objects 
         """
+        
+
         objs = {}
         if cls is None:
             results = self.__session.query(
-                User, State, City, Amenity, Place, Review
+                State, City
             ).all()
 
             for result in results:
-                key = result.to_dict()['__class__'] + "." + result.id
+                key = result.__class__.__name__ + "." + result.id
                 objs[key] = result
         else:
             results = self.__session.query(cls).all()
 
             for result in results:
-                key = result.to_dict()['__class__'] + "." + result.id
+                key = result.__class__.__name__ + "." + result.id
                 objs[key] = result
 
         return objs
