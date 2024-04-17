@@ -61,7 +61,7 @@ class DBStorage:
         objs = {}
         if cls is None:
             results = self.__session.query(
-                State, City, User
+                State, City, User, Place
             ).all()
 
             for result in results:

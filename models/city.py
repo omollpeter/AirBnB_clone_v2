@@ -18,3 +18,6 @@ class City(BaseModel, Base):
     )
     name = Column(String(length=128), nullable=False)
     state = relationship("State", backref="cities")
+    places  = relationship(
+        "Place", cascade="all, delete-orphan"
+    )
