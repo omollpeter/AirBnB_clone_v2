@@ -24,6 +24,8 @@ HBNB_MYSQL_PWD = os.environ.get("HBNB_MYSQL_PWD")
 HBNB_MYSQL_HOST = os.environ.get("HBNB_MYSQL_HOST")
 HBNB_MYSQL_DB = os.environ.get("HBNB_MYSQL_DB")
 
+model_classes = [State, City, User, Place, Review, Amenity]
+
 
 class DBStorage:
     """Defines a database storage engine"""
@@ -43,7 +45,6 @@ class DBStorage:
             pool_pre_ping=True
         )
 
-
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
 
@@ -60,20 +61,18 @@ class DBStorage:
 
         objs = {}
         if cls is None:
-            results = self.__session.query(
-                State, City, User, Place, Review
-            ).all()
+            for class_ in model_classes:
+                results = self.__session.query(class_).all()
 
-            for result in results:
-                key = result.__class__.__name__ + "." + result.id
-                objs[key] = result
+                for result in results:
+                    key = result.__class__.__name__ + "." + result.id
+                    objs[key] = result
         else:
             results = self.__session.query(cls).all()
 
             for result in results:
                 key = result.__class__.__name__ + "." + result.id
                 objs[key] = result
-
         return objs
 
     def new(self, obj):

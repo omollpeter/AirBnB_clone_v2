@@ -1,8 +1,26 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Float
+from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
+
+
+place_amenity = Table(
+    'place_amenity',
+    Base.metadata,
+    Column(
+        'place_id',
+        String(length=60),
+        ForeignKey("places.id"),
+        primary_key=True, nullable=False
+    ),
+    Column(
+        'amenity_id',
+        String(length=60),
+        ForeignKey("amenities.id"),
+        primary_key=True, nullable=False
+    )
+)
 
 
 class Place(BaseModel, Base):
@@ -10,7 +28,7 @@ class Place(BaseModel, Base):
 
     __tablename__ = "places"
 
-    revw_id = Column(
+    city_id = Column(
         String(length=60), ForeignKey("cities.id"), nullable=False
     )
     user_id = Column(
@@ -28,6 +46,9 @@ class Place(BaseModel, Base):
     user = relationship("User")
     cities = relationship("City")
     reviews = relationship("Review", cascade="all, delete-orphan")
+    amenities = relationship(
+        "Amenity", secondary=place_amenity, viewonly=False
+    )
 
     @property
     def reviews(self):
@@ -40,8 +61,28 @@ class Place(BaseModel, Base):
         revw_instances = []
 
         for key, value in storage.all().items():
-            if not "Place" in key:
+            if not "Review" in key:
                 continue
             if self.id in value:
                 revw_instances.append(value)
         return revw_instances
+
+    @property
+    def amenities(self):
+        """
+        Returns the list of amenity instances based on amenity_ids
+        """
+        from models import storage
+        amenity_instances = []
+
+        for key, value in storage.all().items():
+            if not "Amenity" in key:
+                continue
+            if self.id in value and key.split('.')[1] in self.amenity_ids:
+                amenity_instances.append(value)
+        return amenity_instances
+
+    @amenities.setter
+    def amenities(self, amenity):
+        if amenity:
+            self.amenity_ids.append(amenity.id)
