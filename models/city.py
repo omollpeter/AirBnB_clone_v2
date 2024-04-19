@@ -16,4 +16,4 @@ class City(BaseModel, Base):
         nullable=False
     )
     name = Column(String(128), nullable=False)
-    state = relationship("State")
+    state = relationship("State", overlaps="cities")
