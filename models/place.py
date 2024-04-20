@@ -3,6 +3,10 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
+import os
+
+
+HBNB_TYPE_STORAGE = os.environ.get("HBNB_TYPE_STORAGE")
 
 
 place_amenity = Table(
@@ -45,44 +49,46 @@ class Place(BaseModel, Base):
     amenity_ids = []
     user = relationship("User")
     cities = relationship("City")
-    reviews = relationship("Review", cascade="all, delete-orphan")
-    amenities = relationship(
-        "Amenity", secondary=place_amenity, viewonly=False
-    )
+    if HBNB_TYPE_STORAGE == "db":
+        reviews = relationship("Review", cascade="all, delete-orphan")
+        amenities = relationship(
+            "Amenity", secondary=place_amenity, viewonly=False
+        )
 
-    @property
-    def reviews(self):
-        """
-        Returns the list of review instances with place id equals to
-        the current Place.id
-        """
+    if HBNB_TYPE_STORAGE == "file":
+        @property
+        def reviews(self):
+            """
+            Returns the list of review instances with place id equals to
+            the current Place.id
+            """
 
-        from models import storage
-        revw_instances = []
+            from models import storage
+            revw_instances = []
 
-        for key, value in storage.all().items():
-            if not "Review" in key:
-                continue
-            if self.id in value:
-                revw_instances.append(value)
-        return revw_instances
+            for key, value in storage.all().items():
+                if not "Review" in key:
+                    continue
+                if self.id in value:
+                    revw_instances.append(value)
+            return revw_instances
 
-    @property
-    def amenities(self):
-        """
-        Returns the list of amenity instances based on amenity_ids
-        """
-        from models import storage
-        amenity_instances = []
+        @property
+        def amenities(self):
+            """
+            Returns the list of amenity instances based on amenity_ids
+            """
+            from models import storage
+            amenity_instances = []
 
-        for key, value in storage.all().items():
-            if not "Amenity" in key:
-                continue
-            if self.id in value and key.split('.')[1] in self.amenity_ids:
-                amenity_instances.append(value)
-        return amenity_instances
+            for key, value in storage.all().items():
+                if not "Amenity" in key:
+                    continue
+                if self.id in value and key.split('.')[1] in self.amenity_ids:
+                    amenity_instances.append(value)
+            return amenity_instances
 
-    @amenities.setter
-    def amenities(self, amenity):
-        if amenity:
-            self.amenity_ids.append(amenity.id)
+        @amenities.setter
+        def amenities(self, amenity):
+            if amenity:
+                self.amenity_ids.append(amenity.id)
