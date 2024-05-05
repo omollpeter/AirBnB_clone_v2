@@ -7,10 +7,9 @@ This module generates a .tgz archive from the contents of the web_static folder
 from fabric.api import local, task
 from datetime import datetime
 import os
-from collections.abc import Mapping
 
 
-# @task
+@task
 def do_pack():
     """
     This function generates a .tgz archive from the contents of the
