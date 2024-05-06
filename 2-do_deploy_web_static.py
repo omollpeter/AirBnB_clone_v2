@@ -1,29 +1,55 @@
 #!/usr/bin/python3
 """
-This module distributes an archive to your web servers
+This module distributes archived files to multiple web servers
 """
 
-from fabric import task, Connection
+
+from fabric.operations import run, local, sudo, put
+from fabric.api import env
+from fabric.context_managers import cd, lcd
 import os
 
 
-@task
+env.user = "ubuntu"
+env.hosts = ["3.90.85.174", "100.26.159.203"]
+
+
+def list_dirs():
+    """
+    Test example
+    """
+    with cd("~/"):
+        run("ls -l")
+
+
 def do_deploy(archive_path):
     """
-    Deploys a given archive to web servers using Fabric.
-
-    Args:
-        archive_path (str): The path to the archive file.
-
-    Returns:
-        None if archive path, False otherwise.
+    Distributes archived contents to multiple servers
     """
     if not os.path.exists(archive_path):
         return False
-    
-    # env.hosts = ["3.90.85.174", "100.26.159.203"]
+    file_name = os.path.splitext(archive_path)[0].split("/")[-1]
 
-    # try:
-    #     with Connection(env.hosts) as c:
-    #         c.put(archive_path, "/tmp/")
-            
+    put(archive_path, "/tmp/")
+
+    sudo("mkdir -p /data/web_static/releases/{}".format(file_name))
+
+    sudo("tar -xzf {} -C /data/web_static/releases/{}".format(
+        archive_path, file_name
+    ))
+
+    sudo("mv /data/web_static/releases/{}/web_static/* \
+/data/web_static/releases/{}".format(file_name, file_name))
+
+    sudo("rm -rf /data/web_static/releases/{}/web_static".format(
+        file_name
+    ))
+
+    sudo("rm -f /tmp/{}".format(archive_path))
+
+    sudo("rm -rf /data/web_static/current")
+
+    sudo("ln -s /data/web_static/releases/{} /data/web_static/\
+current".format(file_name))
+
+    return True
