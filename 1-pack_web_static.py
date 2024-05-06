@@ -1,15 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """
 This module generates a .tgz archive from the contents of the web_static folder
 """
 
 
-from fabric.api import local, task
+from fabric.operations import local, run, sudo
 from datetime import datetime
 import os
 
 
-@task
 def do_pack():
     """
     This function generates a .tgz archive from the contents of the
