@@ -28,14 +28,16 @@ def do_deploy(archive_path):
     """
     if not os.path.exists(archive_path):
         return False
-    file_name = os.path.splitext(archive_path)[0].split("/")[-1]
+
+    archivepath = archive_path.split("/")[-1]
+    file_name = os.path.splitext(archivepath)[0]
 
     put(archive_path, "/tmp/")
 
     sudo("mkdir -p /data/web_static/releases/{}".format(file_name))
 
-    sudo("tar -xzf {} -C /data/web_static/releases/{}".format(
-        archive_path, file_name
+    sudo("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".format(
+        archivepath, file_name
     ))
 
     sudo("mv /data/web_static/releases/{}/web_static/* \
@@ -45,7 +47,7 @@ def do_deploy(archive_path):
         file_name
     ))
 
-    sudo("rm -f /tmp/{}".format(archive_path))
+    sudo("rm -f /tmp/{}".format(archivepath))
 
     sudo("rm -rf /data/web_static/current")
 
