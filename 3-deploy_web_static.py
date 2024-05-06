@@ -80,3 +80,14 @@ def do_deploy(archive_path):
 current".format(file_name))
 
     return True
+
+
+def deploy():
+    """
+    This function distributes an archive to multiple web servers
+    """
+    archive_path = do_pack()
+
+    if not os.path.exists(archive_path):
+        return False
+    do_deploy(archive_path)
