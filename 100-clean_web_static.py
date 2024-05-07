@@ -91,3 +91,30 @@ def deploy():
     if not os.path.exists(archive_path):
         return False
     do_deploy(archive_path)
+
+
+def do_clean(number=0):
+    """
+    Deletes out-of-date archives
+    """
+    versions = sorted(os.listdir("versions"), reverse=True)
+
+    to_delete = []
+    archives = []
+
+    if number == 1 or number == 0:
+        for i in range(1, len(versions)):
+            to_delete.append(versions[i])
+            archives.append(os.path.splitext(versions[i])[0])
+    else:
+        for i in range(number, len(versions)):
+            to_delete.append(versions[i])
+            archives.append(os.path.splitext(versions[i])[0])
+
+    with cd("/data/web_static/releases/"):
+        for f in archives:
+            sudo("rm -rf {}".format(f))
+
+    for f in to_delete:
+        if os.path.exists(os.path.join("versions", f)):
+            local("rm -f versions/{}".format(f))
