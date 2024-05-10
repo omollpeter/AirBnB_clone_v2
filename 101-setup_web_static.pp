@@ -97,7 +97,9 @@ server {
 
 file { '/etc/nginx/sites-enabled/default':
     ensure => 'link',
-    target => '/etc/nginx/sites-available/default'
+    target => '/etc/nginx/sites-available/default',
+    owner  => 'ubuntu',
+    group  => 'ubuntu'
 }
 
 service { 'nginx':
