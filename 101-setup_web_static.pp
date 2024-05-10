@@ -6,7 +6,7 @@ exec { 'apt update':
 
 package { 'nginx':
     ensure  => 'installed',
-    require => Exec['apt update]
+    require => Exec['apt update']
 }
 
 file { '/data/':
