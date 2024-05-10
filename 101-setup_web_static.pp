@@ -40,7 +40,7 @@ file { '/data/web_static/releases/test/':
 file { '/data/web_static/releases/test/index.html':
     ensure  => 'present',
     owner   => 'ubuntu',
-    group   => 'ubuntu'
+    group   => 'ubuntu',
     mode    => '0644',
     content => @(CONTENT)
 <html>
