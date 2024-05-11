@@ -5,7 +5,7 @@ This module combines archiving and deployment
 
 
 from fabric.operations import run, local, sudo, put
-from fabric.api import env
+from fabric.api import env, execute
 from fabric.context_managers import cd
 from datetime import datetime
 import os
@@ -111,9 +111,12 @@ def do_clean(number=0):
             to_delete.append(versions[i])
             archives.append(os.path.splitext(versions[i])[0])
 
-    with cd("/data/web_static/releases/"):
-        for f in archives:
-            sudo("rm -rf {}".format(f))
+    def clean_remote():
+        with cd("/data/web_static/releases/"):
+            for f in archives:
+                sudo("rm -rf {}".format(f))
+
+    execute(clean_remote)
 
     for f in to_delete:
         if os.path.exists(os.path.join("versions", f)):
