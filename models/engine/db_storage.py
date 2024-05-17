@@ -48,16 +48,14 @@ class DBStorage:
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
 
-
     def all(self, cls=None):
         """
         Query on the current db session depending on the class name
         or None
 
         Returns:
-            return (dict): Dictionary containing objects 
+            return (dict): Dictionary containing objects
         """
-        
 
         objs = {}
         if cls is None:
@@ -98,3 +96,9 @@ class DBStorage:
             bind=self.__engine, expire_on_commit=False)
         )
         self.__session = Session()
+
+    def close(self):
+        """
+        Closes the current session by calling remove method on scoped session
+        """
+        self.__session.close()

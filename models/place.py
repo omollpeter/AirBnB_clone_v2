@@ -67,7 +67,7 @@ class Place(BaseModel, Base):
             revw_instances = []
 
             for key, value in storage.all().items():
-                if not "Review" in key:
+                if "Review" not in key:
                     continue
                 if self.id in value:
                     revw_instances.append(value)
@@ -82,7 +82,7 @@ class Place(BaseModel, Base):
             amenity_instances = []
 
             for key, value in storage.all().items():
-                if not "Amenity" in key:
+                if "Amenity" not in key:
                     continue
                 if self.id in value and key.split('.')[1] in self.amenity_ids:
                     amenity_instances.append(value)

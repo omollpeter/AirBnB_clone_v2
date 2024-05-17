@@ -32,7 +32,7 @@ class State(BaseModel, Base):
             city_instances = []
 
             for key, value in storage.all().items():
-                if not "City" in key:
+                if "City" not in key:
                     continue
                 if self.id in value:
                     city_instances.append(value)
