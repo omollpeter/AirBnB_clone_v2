@@ -29,11 +29,10 @@ class State(BaseModel, Base):
             state id
             """
             from models import storage
+            from models.city import City
             city_instances = []
 
-            for key, value in storage.all().items():
-                if "City" not in key:
-                    continue
-                if self.id in value:
-                    city_instances.append(value)
+            for city in storage.all(City).values():
+                if city.state_id == self.id:
+                    city_instances.append(city)
             return city_instances
