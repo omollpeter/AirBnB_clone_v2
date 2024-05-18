@@ -28,7 +28,9 @@ def states(id=None):
             if s.id == id:
                 s_name = s.name
 
-    return render_template('9-states.html', states=sorted_states, id=id, s_name=s_name)
+    return render_template(
+        '9-states.html', states=sorted_states, id=id, s_name=s_name
+    )
 
 
 @app.teardown_appcontext
