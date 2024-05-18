@@ -13,24 +13,22 @@ from models.state import State
 app = Flask(__name__)
 
 
-@app.route('/states_list', strict_slashes=False)
-def states():
+@app.route('/states', strict_slashes=False)
+@app.route('/states/<id>', strict_slashes=False)
+def states(id=None):
     """
     Lists all states present in the database
     """
     states = storage.all(State)
     sorted_states = dict(sorted(states.items(), key=lambda item: item[1].name))
-    return render_template('7-states_list.html', states=sorted_states)
 
+    s_name = ''
+    if id:
+        for s in states.values():
+            if s.id == id:
+                s_name = s.name
 
-@app.route('/cities_by_states', strict_slashes=False)
-def cities_by_state():
-    """
-    Lists states along with their cities
-    """
-    states = storage.all(State)
-    sort_states = dict(sorted(states.items(), key=lambda item: item[1].name))
-    return render_template("8-cities_by_states.html", states=sort_states)
+    return render_template('9-states.html', states=sorted_states, id=id, s_name=s_name)
 
 
 @app.teardown_appcontext
