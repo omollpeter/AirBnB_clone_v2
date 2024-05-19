@@ -27,10 +27,14 @@ article {
 .headline {
 	display: flex;
 	flex-direction: row;
-	position: relative;
+	/* position: relative; */
 
 	height: 80px;	
 	width: 100%;
+}
+
+.headline h2 {
+	text-align: left;
 }
 
 .price_by_night {
@@ -38,8 +42,8 @@ article {
 	justify-content: center;
 	align-self: flex-end;
 
-	position: absolute;
-	right: 0;
+	/* position: absolute;
+	right: 0; */
 
 	line-height: 60px;
 	color: #FF5A5F;
